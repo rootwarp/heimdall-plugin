@@ -5,6 +5,7 @@ import (
 	"time"
 
 	plugin_grpc "heimdall-plugin/grpc"
+	"heimdall-plugin/plugin"
 )
 
 const (
@@ -14,10 +15,16 @@ const (
 func main() {
 	log.Println("Start ", servName)
 
+	plugin.NewPlugin()
+	err := plugin.NewPlugin().Start()
+	if err != nil {
+		log.Panic(err)
+	}
+
 	plugin_grpc.StartServer()
 
 	for {
-		// TODO: Handle SIGTERM
+		// TODO: Handle SIGTERM, Shutdown gracefully.
 		time.Sleep(time.Second * 10)
 	}
 }

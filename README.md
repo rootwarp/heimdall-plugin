@@ -1,3 +1,16 @@
+# Heimdall Plugin for Node Manager
+
+Build plugin.
+
+```
+~$ make build
+```
+
+List APIs by using reflection.
+
+```
+~$ grpcurl -plaintext localhost:9090 list nodemanager.v1.NodeManager
+```
 
 Install Go plugins for protobuf.
 

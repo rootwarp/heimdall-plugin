@@ -2,7 +2,8 @@ build:
 	@go build
 
 test:
-	@echo "Unit test script will be here"
+	@go fmt
+	@go test ./... -v
 
 coverage:
 	echo "Test Coverage script will be here"

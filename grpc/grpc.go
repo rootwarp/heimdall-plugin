@@ -10,13 +10,18 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
+
+	"heimdall-plugin/plugin"
 )
 
 const (
 	grpcPort = 9090
 )
 
-// TODO: Refactoring.
+var (
+	pluginInstance plugin.Plugin
+)
+
 type grpcService struct {
 	pb.UnimplementedNodeManagerServer
 }
@@ -25,22 +30,42 @@ func (s *grpcService) Healthz(ctx context.Context, in *emptypb.Empty) (*pb.Healt
 	log.Println("healthz")
 
 	// TODO: Health check.
-	return nil, nil
+
+	resp := pb.HealthResponse{
+		Alive: true,
+	}
+	return &resp, nil
 }
 
 func (s *grpcService) Start(ctx context.Context, in *pb.StartRequest) (*pb.StartResponse, error) {
-	// TODO: Start node manager.
-	return nil, nil
+	// TODO: Check already running.
+
+	err := pluginInstance.Start()
+	if err != nil {
+		return &pb.StartResponse{Result: pb.CommandStatus_Failed}, nil
+	}
+
+	return &pb.StartResponse{Result: pb.CommandStatus_Success}, nil
 }
 
 func (s *grpcService) Stop(ctx context.Context, in *pb.StopRequest) (*pb.StopResponse, error) {
-	// TODO: Stop node manager.
-	return nil, nil
+	// TODO: Check running.
+
+	err := pluginInstance.Stop()
+	if err != nil {
+		return &pb.StopResponse{Result: pb.CommandStatus_Failed}, nil
+	}
+
+	return &pb.StopResponse{Result: pb.CommandStatus_Success}, nil
 }
 
 func (s *grpcService) UpdateConfig(ctx context.Context, in *pb.UpdateRequest) (*pb.UpdateResponse, error) {
 	// TODO: Update config and refresh service.
 	return nil, nil
+}
+
+func init() {
+	pluginInstance = plugin.NewPlugin()
 }
 
 // StartServer try to start grpc service.
